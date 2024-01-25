@@ -1,16 +1,28 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import requests
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def get_repo_files(repo_owner, repo_name):
+    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/contents"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        files = response.json()
+        return files
+    else:
+        return None
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+# Example usage
+repo_owner = "HeavyLvy"
+repo_name = "PyUpdater"
+files = get_repo_files(repo_owner, repo_name)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# If you want the content of a specific file
+if files:
+    for file in files:
+        file_content_url = file["download_url"]
+        content_response = requests.get(file_content_url)
+
+        if content_response.status_code == 200:
+            file_content = content_response.text
+            print(f"Content of {file['name']}:\n{file_content}")
